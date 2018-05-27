@@ -1,3 +1,8 @@
+2018-05-25
+Ver0.0.2
+add fish_temp > 28 c then fan open
+
+
 2017-09-02
 Ver0.0.1
 

@@ -1,7 +1,12 @@
 /*
+Ver.0.0.2  
+2018/05/25
+add fish_temp > 28 c then fan open
+ 
 Ver0.0.1
 08:0-20:00 Open FAN
 LCD display Time & Temperature & FAN1 FAN2 states.
+Arduino Nano
 
 SimpleTimer library for Arduino  //timer
 https://github.com/jfturcot/SimpleTimer
@@ -48,6 +53,11 @@ int lcd_backlight;
 int fan1;
 int fan2;
 
+
+float fish_tempL=30.0;
+float fish_tempS=27.0;
+float fish_temp1;
+
 void setup(void)
 {
   pinMode(relay1,OUTPUT);
@@ -59,7 +69,7 @@ void setup(void)
   //Serial.println("Temperature Sensor");
   // 初始化 init
   sensors.begin();
-  //setTime(17,7,15,6,10,6,30);
+  //setTime(18,5,27,7,20,25,30);
 
   lcd.setCursor(4, 0); //set lcd,character 4, line 0
   lcd.print("/"); //print / at character 4 line 0
@@ -87,7 +97,8 @@ void loop(void)
   lcd.setCursor(9, 1);
   lcd.print("Temp: ");
   lcd.print(sensors.getTempCByIndex(0));  //display temperature.
-
+  fish_temp1=sensors.getTempCByIndex(0);
+  
   lcd_backlight=digitalRead(lcd_switch);
   if(lcd_backlight==HIGH)  //open or close LCD backlight.
     lcd.backlight();
@@ -97,7 +108,7 @@ void loop(void)
   fan1=digitalRead(fan1_switch);
   fan2=digitalRead(fan2_switch); 
 
-  if((h>=8)||(h<=20))  //8:00-20:00 open fan
+  if((h>=8)||(h<=22))  //8:00-20:00 open fan
   {
     if(fan1==HIGH)
     {
@@ -107,11 +118,22 @@ void loop(void)
      // Serial.println("FAN1 0");
     }
     else
-    {
-      digitalWrite(relay1,HIGH);
-      lcd.setCursor(0, 3);
-      lcd.print("FAN1 OFF");
-      //Serial.println("FAN1 1");
+    {   
+        if(fish_temp1>fish_tempL)
+        {
+            digitalWrite(relay1,LOW); //relay is LOW working
+            lcd.setCursor(0, 3);
+            lcd.print("FAN1 ON ");
+           // Serial.println("FAN1 0");
+
+        }
+        if(fish_temp1<fish_tempS)
+        {
+            digitalWrite(relay1,HIGH);
+            lcd.setCursor(0, 3);
+            lcd.print("FAN1 OFF");
+            //Serial.println("FAN1 1");
+        }
     }
   }
   else
@@ -130,10 +152,20 @@ void loop(void)
       lcd.print("FAN2 ON ");
     }
     else
-    { 
-      digitalWrite(relay2,HIGH);
-      lcd.setCursor(9, 3);
-      lcd.print("FAN2 OFF");      
+    {
+        if(fish_temp1>fish_tempL)
+        {
+            digitalWrite(relay2,LOW);
+            lcd.setCursor(9, 3);
+            lcd.print("FAN2 ON ");
+          
+        }
+      if(fish_temp1<fish_tempS)
+      { 
+            digitalWrite(relay2,HIGH);
+            lcd.setCursor(9, 3);
+            lcd.print("FAN2 OFF");      
+      }
     }
   }
   else
@@ -142,8 +174,7 @@ void loop(void)
     lcd.setCursor(9, 3);
     lcd.print("FAN2 OFF");
   }  
-   
-  
+
   delay(120);
 }
 
