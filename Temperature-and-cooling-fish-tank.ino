@@ -3,6 +3,7 @@ Ver.0.0.2
 2018/05/25
 add fish_temp > 28 c then fan open
  
+ 
 Ver0.0.1
 08:0-20:00 Open FAN
 LCD display Time & Temperature & FAN1 FAN2 states.
@@ -98,6 +99,11 @@ void loop(void)
   lcd.print("Temp: ");
   lcd.print(sensors.getTempCByIndex(0));  //display temperature.
   fish_temp1=sensors.getTempCByIndex(0);
+  
+  lcd.setCursor(0, 3);
+  lcd.print("FAN1 OFF");    
+  lcd.setCursor(9, 3);
+  lcd.print("FAN2 OFF");  
   
   lcd_backlight=digitalRead(lcd_switch);
   if(lcd_backlight==HIGH)  //open or close LCD backlight.
